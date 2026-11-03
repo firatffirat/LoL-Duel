@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#10131d">
+<title>LoL Duel</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<main class="wrap">
+
+<header>
+<div class="eyebrow">İKİ KİŞİLİK ÇEVRİM İÇİ DÜELLO</div>
+<h1>⚔️ LoL <span>Duel</span></h1>
+<p class="muted">Şampiyonunu seç. Eşyalarını diz. Rakibini alt et.</p>
+</header>
+
+<section id="connect" class="panel">
+
+<label>Oyuncu adın</label>
+<input id="playerName" maxlength="18" placeholder="Adını yaz">
+
+<button id="createBtn" class="primary">Lobi oluştur</button>
+
+<div class="or">— veya —</div>
+
+<label>Arkadaşının oda kodu</label>
+<input id="roomCode" maxlength="6" placeholder="Örn. A1B2C3">
+
+<button id="joinBtn">Odaya katıl</button>
+
+<p id="connectMsg" class="msg"></p>
+
+</section>
+
+<section id="game" class="hidden">
+
+<div class="panel roombar">
+<div>
+<small>ODA KODU</small>
+<strong id="codeLabel">------</strong>
+</div>
+<button id="copyBtn" class="small">Kodu kopyala</button>
+</div>
+
+<div class="players" id="players"></div>
+
+<section id="championSection" class="panel hidden">
+<h2>Şampiyonunu seç</h2>
+<p class="muted">Her oyuncu farklı bir şampiyon seçmeli.</p>
+<div id="champions" class="grid"></div>
+</section>
+
+<section id="itemSection" class="panel hidden">
+<div class="sectionhead">
+<h2>Eşya seçimi</h2>
+<span id="turnLabel" class="pill"></span>
+</div>
+<p class="muted">Sırayla 3 eşya seçin.</p>
+<div id="items" class="grid"></div>
+<p id="itemCount" class="muted"></p>
+</section>
+
+<section id="battleSection" class="panel hidden">
+<h2>⚔️ Düello sonucu</h2>
+<div id="battleSummary"></div>
+<div id="battleLog"></div>
+<button id="restartBtn" class="primary">
+Yeni lobi için sayfayı yenile
+</button>
+</section>
+
+<section class="panel">
+<h3>Oyun akışı</h3>
+<div id="activity" class="activity"></div>
+</section>
+
+</section>
+</main>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
