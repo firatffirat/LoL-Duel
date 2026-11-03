@@ -1,8 +1,9 @@
+
 {
   "name": "lol-duel",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "Two player online champion duel",
+  "description": "Online two-player League inspired auto duel",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
