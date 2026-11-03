@@ -10,271 +10,420 @@ const io = new Server(server);
 app.use(express.static("public"));
 
 const PORT = process.env.PORT || 3000;
-
 const rooms = {};
 
-const champions = {
-  zed: {
-    id: "zed",
-    name: "Zed",
-    hp: 980,
-    atk: 78,
-    def: 38,
-    power: 0
-  },
-  yasuo: {
-    id: "yasuo",
-    name: "Yasuo",
-    hp: 1080,
-    atk: 72,
-    def: 44,
-    power: 0
-  },
-  ahri: {
-    id: "ahri",
-    name: "Ahri",
-    hp: 940,
-    atk: 58,
-    def: 35,
-    power: 78
-  },
-  darius: {
-    id: "darius",
-    name: "Darius",
-    hp: 1280,
-    atk: 82,
-    def: 58,
-    power: 0
-  },
-  lux: {
-    id: "lux",
-    name: "Lux",
-    hp: 920,
-    atk: 48,
-    def: 34,
-    power: 88
-  },
-  jinx: {
-    id: "jinx",
-    name: "Jinx",
-    hp: 1000,
-    atk: 76,
-    def: 36,
-    power: 0
-  }
-};
+// ==========================================
+// 1. ŞAMPİYON VERİTABANI - 28 ŞAMPİYON
+// ==========================================
 
-const items = {
-  blade: {
-    id: "blade",
-    name: "Saldırı Kılıcı",
-    atk: 18,
-    def: 0,
-    hp: 0,
-    power: 0,
-    lifesteal: 0,
-    crit: 0
-  },
-  armor: {
-    id: "armor",
-    name: "Zincir Yelek",
-    atk: 0,
-    def: 20,
-    hp: 0,
-    power: 0,
-    lifesteal: 0,
-    crit: 0
-  },
-  crystal: {
-    id: "crystal",
-    name: "Büyü Kristali",
-    atk: 0,
-    def: 0,
-    hp: 0,
-    power: 22,
-    lifesteal: 0,
-    crit: 0
-  },
-  vamp: {
-    id: "vamp",
-    name: "Yaşam Kılıcı",
-    atk: 10,
-    def: 0,
-    hp: 0,
-    power: 0,
-    lifesteal: 8,
-    crit: 0
-  },
-  boots: {
-    id: "boots",
-    name: "Gezgin Çizmesi",
-    atk: 0,
-    def: 8,
-    hp: 0,
-    power: 0,
-    lifesteal: 0,
-    crit: 0
-  },
-  heart: {
-    id: "heart",
-    name: "Dev Kemeri",
-    atk: 0,
-    def: 0,
-    hp: 180,
-    power: 0,
-    lifesteal: 0,
-    crit: 0
-  },
-  crit: {
-    id: "crit",
-    name: "Keskin Kenar",
-    atk: 12,
-    def: 0,
-    hp: 0,
-    power: 0,
-    lifesteal: 0,
-    crit: 15
-  },
-  ward: {
-    id: "ward",
-    name: "Direnç Pelerini",
-    atk: 0,
-    def: 14,
-    hp: 60,
-    power: 0,
-    lifesteal: 0,
-    crit: 0
-  }
-};
+const champions = [
+  ["zed","Zed","Assassin",950,82,35,0,"shadow"],
+  ["akali","Akali","Assassin",1000,65,35,75,"energy"],
+  ["katarina","Katarina","Assassin",950,76,32,40,"reset"],
+  ["talon","Talon","Assassin",1020,80,40,0,"bleed"],
+
+  ["yasuo","Yasuo","Fighter",1100,75,48,0,"wind"],
+  ["yone","Yone","Fighter",1080,78,43,20,"spirit"],
+  ["darius","Darius","Fighter",1350,84,62,0,"bleed"],
+  ["garen","Garen","Fighter",1400,72,65,0,"execute"],
+  ["riven","Riven","Fighter",1120,80,48,0,"combo"],
+  ["sett","Sett","Fighter",1450,76,58,0,"grit"],
+
+  ["ahri","Ahri","Mage",980,48,35,90,"charm"],
+  ["lux","Lux","Mage",950,45,32,100,"shield"],
+  ["veigar","Veigar","Mage",900,42,30,125,"scaling"],
+  ["annie","Annie","Mage",1000,48,38,90,"stun"],
+  ["morgana","Morgana","Mage",1100,45,48,80,"drain"],
+
+  ["jinx","Jinx","Marksman",1050,85,32,0,"ramp"],
+  ["jhin","Jhin","Marksman",1000,105,35,0,"fourth"],
+  ["ashe","Ashe","Marksman",1080,72,40,0,"slow"],
+
+  ["leesin","Lee Sin","Jungle",1150,80,48,0,"combo"],
+  ["masteryi","Master Yi","Jungle",1050,90,38,0,"speed"],
+  ["shaco","Shaco","Jungle",1000,78,38,0,"clone"],
+  ["kayn","Kayn","Jungle",1150,78,48,25,"form"],
+  ["khazix","Kha'Zix","Jungle",1000,88,38,0,"isolation"],
+  ["evelynn","Evelynn","Jungle",980,55,35,100,"ambush"],
+  ["warwick","Warwick","Jungle",1350,72,60,0,"hunt"],
+  ["viego","Viego","Jungle",1150,82,45,0,"possess"],
+  ["nocturne","Nocturne","Jungle",1100,80,42,25,"fear"],
+  ["ekko","Ekko","Jungle",1050,65,40,90,"rewind"]
+].map(([id,name,role,hp,atk,def,power,mechanic]) => ({
+  id,name,role,hp,atk,def,power,mechanic
+}));
+
+// ==========================================
+// 2. EŞYA VERİTABANI - 30 EŞYA
+// ==========================================
+
+const items = [
+  ["blade","Saldırı Kılıcı",0,18,0,0,0],
+  ["greatsword","Dev Kılıç",0,35,0,0,0],
+  ["dagger","Hançer",0,10,0,0,12],
+  ["crit","Keskin Kenar",0,20,0,0,15],
+  ["blood","Kan Kılıcı",0,18,100,0,8],
+  ["vamp","Yaşam Hırsızı",0,12,0,0,12],
+  ["bow","Hız Yayı",0,15,0,0,20],
+  ["armor","Zincir Yelek",20,0,0,0,0],
+  ["plate","Çelik Zırh",35,0,100,0,0],
+  ["helm","Direnç Miğferi",20,0,120,0,0],
+  ["heart","Dev Kemeri",0,0,250,0,0],
+  ["shield","Koruyucu Kalkan",25,0,100,0,0],
+  ["boots","Gezgin Çizmesi",12,5,0,0,5],
+  ["crystal","Büyü Kristali",0,0,0,25,0],
+  ["rod","Büyü Asası",0,0,0,45,0],
+  ["orb","Gizemli Küre",10,0,50,30,0],
+  ["tome","Kadim Kitap",0,0,0,35,0],
+  ["staff","Bilge Asası",0,0,0,55,0],
+  ["void","Hiçlik Değneği",0,0,0,40,0],
+  ["mana","Mana Kristali",0,0,100,20,0],
+  ["thorn","Dikenli Zırh",30,0,80,0,0],
+  ["guardian","Muhafız Zırhı",45,0,150,0,0],
+  ["rage","Öfke Bıçağı",0,25,0,0,10],
+  ["shadow","Gölge Bıçağı",0,30,0,0,8],
+  ["executioner","Cellat Kılıcı",0,28,0,0,5],
+  ["crown","Büyü Tacı",0,0,50,55,0],
+  ["angel","Diriliş Zırhı",20,10,120,0,0],
+  ["frozen","Donmuş Kalp",40,0,100,0,0],
+  ["demon","Şeytan Kitabı",0,0,0,35,5],
+  ["destroyer","Yıkıcı",15,32,0,0,5]
+].map(([id,name,def,atk,hp,power,crit]) => ({
+  id,name,def,atk,hp,power,crit
+}));
+
+// ==========================================
+// 3. ODA VE OYUNCU SİSTEMİ
+// ==========================================
 
 function makeCode() {
   let code;
-
   do {
-    code = Math.random().toString(36).substring(2, 7).toUpperCase();
+    code = Math.random().toString(36).substring(2,7).toUpperCase();
   } while (rooms[code]);
-
   return code;
 }
 
-function sendRoom(room) {
-  io.to(room.code).emit("room:update", {
+function findRoom(socketId) {
+  return Object.values(rooms).find(room =>
+    room.players.some(player => player.id === socketId)
+  );
+}
+
+function publicRoom(room) {
+  return {
     code: room.code,
-    hostId: room.hostId,
-    players: room.players,
     phase: room.phase,
+    players: room.players,
     turn: room.turn,
+    currentPicker: room.players[room.turn % 2]?.id || null,
     log: room.log,
-    winner: room.winner,
-    battle: room.battle
-  });
+    battle: room.battle,
+    winner: room.winner
+  };
 }
 
-function getPlayer(room, socketId) {
-  return room.players.find(player => player.id === socketId);
+function updateRoom(room) {
+  io.to(room.code).emit("room:update", publicRoom(room));
 }
 
-function finishBattle(room) {
+// ==========================================
+// 4. KAYN FORM SEÇİMİ VE ŞAMPİYON SEÇİMİ
+// ==========================================
+
+function selectChampion(player, championId, form) {
+  const champion = champions.find(c => c.id === championId);
+
+  if (!champion) return false;
+  if (player.champion) return false;
+
+  const selected = { ...champion };
+
+  if (selected.id === "kayn") {
+    if (!["shadow","rhaast"].includes(form)) return false;
+
+    if (form === "shadow") {
+      selected.name = "Gölge Suikastçısı Kayn";
+      selected.atk += 18;
+      selected.power += 25;
+    } else {
+      selected.name = "Kızıl Rhaast";
+      selected.hp += 250;
+      selected.def += 15;
+    }
+
+    selected.form = form;
+  }
+
+  player.champion = selected;
+  return true;
+}
+
+// ==========================================
+// 5. EŞYA İSTATİSTİKLERİ
+// ==========================================
+
+function calculateStats(player) {
+  const c = player.champion;
+
+  const stats = {
+    hp: c.hp,
+    maxHp: c.hp,
+    atk: c.atk,
+    def: c.def,
+    power: c.power,
+    crit: 0,
+    speed: 0,
+    lifesteal: 0,
+    shield: 0
+  };
+
+  for (const item of player.items) {
+    stats.hp += item.hp;
+    stats.maxHp += item.hp;
+    stats.atk += item.atk;
+    stats.def += item.def;
+    stats.power += item.power;
+    stats.crit += item.crit;
+  }
+
+  stats.crit = Math.min(stats.crit, 75);
+  return stats;
+}
+
+// ==========================================
+// 6. SAVAŞ MOTORU
+// ==========================================
+
+function attack(attacker, defender, round) {
+  const c = attacker.champion;
+  const mechanic = c.mechanic;
+
+  let damage = attacker.atk;
+
+  // Fiziksel saldırı
+  let physical = damage * 100 / (100 + Math.max(0, defender.def));
+
+  // Büyü hasarı
+  let magic = attacker.power * 0.55;
+
+  // Şampiyon mekanikleri
+  switch (mechanic) {
+    case "shadow":
+      if (round % 3 === 0) physical *= 2.1;
+      break;
+
+    case "wind":
+      if (round % 2 === 0) physical *= 1.5;
+      break;
+
+    case "bleed":
+      physical += round * 3;
+      break;
+
+    case "execute":
+      if (defender.hp < defender.maxHp * 0.35) {
+        physical *= 1.8;
+      }
+      break;
+
+    case "combo":
+      if (round % 2 === 0) physical *= 1.65;
+      break;
+
+    case "grit":
+      if (attacker.hp < attacker.maxHp * 0.5) {
+        physical *= 1.35;
+      }
+      break;
+
+    case "charm":
+      magic *= round % 3 === 0 ? 2 : 1;
+      break;
+
+    case "shield":
+      if (round % 3 === 0) attacker.hp = Math.min(
+        attacker.maxHp,
+        attacker.hp + 70
+      );
+      break;
+
+    case "scaling":
+      magic += round * 5;
+      break;
+
+    case "stun":
+      if (round % 3 === 0) physical *= 1.65;
+      break;
+
+    case "drain":
+      attacker.hp = Math.min(
+        attacker.maxHp,
+        attacker.hp + 35
+      );
+      break;
+
+    case "ramp":
+      physical *= 1 + Math.min(round * 0.035, 0.6);
+      break;
+
+    case "fourth":
+      if (round % 4 === 0) physical *= 2;
+      break;
+
+    case "slow":
+      if (round % 2 === 0) physical *= 1.3;
+      break;
+
+    case "speed":
+      physical *= 1 + Math.min(round * 0.025, 0.5);
+      break;
+
+    case "clone":
+      if (round % 3 === 0) physical *= 1.8;
+      break;
+
+    case "form":
+      physical *= c.form === "shadow" ? 1.4 : 1.15;
+      if (c.form === "rhaast") {
+        attacker.hp = Math.min(attacker.maxHp, attacker.hp + 65);
+      }
+      break;
+
+    case "isolation":
+      physical *= 1.35;
+      break;
+
+    case "ambush":
+      if (round === 1 || round % 4 === 0) magic *= 2;
+      break;
+
+    case "hunt":
+      attacker.hp = Math.min(attacker.maxHp, attacker.hp + 45);
+      break;
+
+    case "possess":
+      if (round % 4 === 0) {
+        attacker.atk += 5;
+        physical *= 1.5;
+      }
+      break;
+
+    case "fear":
+      if (round % 3 === 0) physical *= 1.7;
+      break;
+
+    case "rewind":
+      if (round % 5 === 0) {
+        attacker.hp = Math.min(
+          attacker.maxHp,
+          attacker.hp + 120
+        );
+      }
+      break;
+  }
+
+  // Kritik vuruş
+  const critical = Math.random() * 100 < attacker.crit;
+
+  if (critical) physical *= 1.75;
+
+  const totalDamage = Math.max(
+    10,
+    Math.floor(physical + magic)
+  );
+
+  defender.hp = Math.max(0, defender.hp - totalDamage);
+
+  // Can çalma
+  const healing = Math.floor(totalDamage * attacker.lifesteal / 100);
+
+  attacker.hp = Math.min(
+    attacker.maxHp,
+    attacker.hp + healing
+  );
+
+  return {
+    damage: totalDamage,
+    critical,
+    healing
+  };
+}
+
+function startBattle(room) {
   const fighters = room.players.map(player => {
-    const champion = player.champion;
-
-    const stats = {
-      hp: champion.hp,
-      atk: champion.atk,
-      def: champion.def,
-      power: champion.power,
-      lifesteal: 0,
-      crit: 0
-    };
-
-    player.items.forEach(item => {
-      stats.hp += item.hp;
-      stats.atk += item.atk;
-      stats.def += item.def;
-      stats.power += item.power;
-      stats.lifesteal += item.lifesteal;
-      stats.crit += item.crit;
-    });
+    const stats = calculateStats(player);
 
     return {
       id: player.id,
       name: player.name,
-      champion: champion.name,
-      hp: stats.hp,
-      maxHp: stats.hp,
-      atk: stats.atk,
-      def: stats.def,
-      power: stats.power,
-      lifesteal: stats.lifesteal,
-      crit: stats.crit
+      champion: player.champion.name,
+      mechanic: player.champion.mechanic,
+      form: player.champion.form || null,
+      ...stats
     };
   });
 
-  const lines = [];
+  const log = [];
   let round = 1;
-  let attacker = 0;
+  let turn = 0;
 
-  lines.push("SAVAŞ BAŞLADI!");
+  log.push("DÜELLO BAŞLADI!");
 
-  while (fighters[0].hp > 0 && fighters[1].hp > 0 && round <= 30) {
-    const current = fighters[attacker];
-    const enemy = fighters[1 - attacker];
+  while (
+    fighters[0].hp > 0 &&
+    fighters[1].hp > 0 &&
+    round <= 40
+  ) {
+    const attacker = fighters[turn];
+    const defender = fighters[1 - turn];
 
-    let damage = current.atk + Math.floor(current.power * 0.45);
+    const result = attack(attacker, defender, round);
 
-    if (Math.random() * 100 < current.crit) {
-      damage = Math.floor(damage * 1.6);
-      lines.push(current.champion + " kritik vuruş yaptı!");
-    }
-
-    damage = Math.max(5, damage - Math.floor(enemy.def * 0.45));
-
-    enemy.hp = Math.max(0, enemy.hp - damage);
-
-    const healing = Math.floor(damage * current.lifesteal / 100);
-    current.hp = Math.min(current.maxHp, current.hp + healing);
-
-    lines.push(
-      round + ". Tur: " +
-      current.champion + " saldırdı. " +
-      enemy.champion + " " + damage +
-      " hasar aldı."
+    log.push(
+      `${round}. TUR: ${attacker.champion} → ${result.damage} hasar`
     );
 
-    if (healing > 0) {
-      lines.push(current.champion + " " + healing + " can kazandı.");
+    if (result.critical) {
+      log.push("KRİTİK VURUŞ!");
     }
 
-    if (enemy.hp <= 0) break;
+    if (result.healing > 0) {
+      log.push(`${attacker.champion} ${result.healing} can kazandı.`);
+    }
 
-    attacker = 1 - attacker;
+    if (defender.hp <= 0) break;
+
+    turn = 1 - turn;
     round++;
   }
 
-  let winner;
+  let winner = "Berabere";
 
-  if (fighters[0].hp <= 0 && fighters[1].hp <= 0) {
-    winner = "Berabere";
-  } else {
-    const winningFighter = fighters[0].hp > 0 ? fighters[0] : fighters[1];
-    winner = winningFighter.name;
-    lines.push("KAZANAN: " + winningFighter.champion);
+  if (fighters[0].hp > fighters[1].hp) {
+    winner = fighters[0].name;
+  } else if (fighters[1].hp > fighters[0].hp) {
+    winner = fighters[1].name;
   }
+
+  log.push("KAZANAN: " + winner);
 
   room.winner = winner;
   room.battle = {
     fighters,
-    lines,
-    winner
+    log,
+    rounds: round
   };
 
   room.phase = "finished";
-  room.log.push("Savaş tamamlandı.");
 }
 
-io.on("connection", socket => {
+// ==========================================
+// 7. SOCKET.IO OYUN BAĞLANTISI
+// ==========================================
 
-  console.log("Oyuncu bağlandı:", socket.id);
+io.on("connection", socket => {
+  console.log("Bağlandı:", socket.id);
 
   // ODA OLUŞTUR
   socket.on("room:create", (data = {}, callback) => {
@@ -282,37 +431,27 @@ io.on("connection", socket => {
 
     const room = {
       code,
-      hostId: socket.id,
-      players: [
-        {
-          id: socket.id,
-          name: String(data.name || "Oyuncu 1").slice(0, 20),
-          champion: null,
-          items: []
-        }
-      ],
       phase: "waiting",
       turn: 0,
-      log: ["Oda oluşturuldu. İkinci oyuncu bekleniyor."],
       winner: null,
-      battle: null
+      battle: null,
+      log: ["Oda oluşturuldu. Rakip bekleniyor."],
+      players: [{
+        id: socket.id,
+        name: String(data.name || "Oyuncu 1").slice(0, 20),
+        champion: null,
+        items: []
+      }]
     };
 
     rooms[code] = room;
-
-    // ÖNEMLİ: Odayı oluşturan oyuncuyu da odaya dahil et.
     socket.join(code);
 
-    sendRoom(room);
+    updateRoom(room);
 
     if (typeof callback === "function") {
-      callback({
-        ok: true,
-        code
-      });
+      callback({ ok: true, code });
     }
-
-    console.log("Oda oluşturuldu:", code);
   });
 
   // ODAYA KATIL
@@ -322,30 +461,14 @@ io.on("connection", socket => {
 
     if (!room) {
       if (typeof callback === "function") {
-        callback({
-          ok: false,
-          error: "Oda bulunamadı."
-        });
+        callback({ ok: false, error: "Oda bulunamadı." });
       }
       return;
     }
 
-    if (room.players.length >= 2) {
+    if (room.players.length >= 2 || room.phase !== "waiting") {
       if (typeof callback === "function") {
-        callback({
-          ok: false,
-          error: "Oda dolu."
-        });
-      }
-      return;
-    }
-
-    if (room.players.some(player => player.id === socket.id)) {
-      if (typeof callback === "function") {
-        callback({
-          ok: true,
-          code
-        });
+        callback({ ok: false, error: "Oda dolu veya oyun başlamış." });
       }
       return;
     }
@@ -360,123 +483,105 @@ io.on("connection", socket => {
     });
 
     room.phase = "draft";
-    room.log.push("İkinci oyuncu katıldı. Şampiyon seçimi başladı.");
+    room.log.push("İkinci oyuncu katıldı.");
 
-    sendRoom(room);
+    updateRoom(room);
 
     if (typeof callback === "function") {
-      callback({
-        ok: true,
-        code
-      });
+      callback({ ok: true, code });
     }
-
-    console.log("Oyuncu odaya katıldı:", code);
   });
 
   // ŞAMPİYON SEÇ
-  socket.on("champion:pick", (data = {}) => {
-    const room = Object.values(rooms).find(room =>
-      room.players.some(player => player.id === socket.id)
-    );
-
+  socket.on("champion:pick", data => {
+    const room = findRoom(socket.id);
     if (!room || room.phase !== "draft") return;
 
-    const player = getPlayer(room, socket.id);
-    const champion = champions[data.championId];
+    const player = room.players.find(p => p.id === socket.id);
+    if (!player) return;
 
-    if (!player || !champion) return;
-    if (player.champion) return;
+    if (!selectChampion(player, data.championId, data.form)) return;
 
-    player.champion = { ...champion };
+    room.log.push(player.name + " şampiyonunu seçti.");
 
-    room.log.push(
-      player.name + " " + champion.name + " seçti."
-    );
+    if (room.players.every(p => p.champion)) {
+      room.phase = "items";
+      room.log.push("Eşya seçimi başladı.");
+    }
 
-    sendRoom(room);
+    updateRoom(room);
   });
 
   // EŞYA SEÇ
-  socket.on("item:pick", (data = {}) => {
-    const room = Object.values(rooms).find(room =>
-      room.players.some(player => player.id === socket.id)
-    );
+  socket.on("item:pick", data => {
+    const room = findRoom(socket.id);
+    if (!room || room.phase !== "items") return;
 
-    if (!room || room.phase !== "draft") return;
-
-    if (!room.players.every(player => player.champion)) return;
-
-    const player = getPlayer(room, socket.id);
-    const item = items[data.itemId];
+    const player = room.players.find(p => p.id === socket.id);
+    const activePlayer = room.players[room.turn % 2];
+    const item = items.find(i => i.id === data.itemId);
 
     if (!player || !item) return;
-
-    const activePlayer = room.players[room.turn % 2];
-
     if (activePlayer.id !== socket.id) return;
-
-    if (player.items.length >= 3) return;
-
-    if (player.items.some(existing => existing.id === item.id)) return;
+    if (player.items.length >= 6) return;
+    if (player.items.some(i => i.id === item.id)) return;
 
     player.items.push({ ...item });
-
-    room.log.push(
-      player.name + " " + item.name + " aldı."
-    );
-
     room.turn++;
 
+    room.log.push(player.name + " " + item.name + " aldı.");
+
     const totalItems = room.players.reduce(
-      (total, p) => total + p.items.length,
+      (sum, p) => sum + p.items.length,
       0
     );
 
-    if (totalItems >= 6) {
-      finishBattle(room);
+    if (totalItems === 12) {
+      room.phase = "battle";
+      startBattle(room);
     }
 
-    sendRoom(room);
+    updateRoom(room);
   });
 
   // BAĞLANTI KESİLİRSE
   socket.on("disconnect", () => {
-    console.log("Oyuncu ayrıldı:", socket.id);
+    const room = findRoom(socket.id);
+    if (!room) return;
 
-    for (const code of Object.keys(rooms)) {
-      const room = rooms[code];
+    room.players = room.players.filter(p => p.id !== socket.id);
 
-      const index = room.players.findIndex(
-        player => player.id === socket.id
-      );
-
-      if (index !== -1) {
-        room.players.splice(index, 1);
-
-        if (room.players.length === 0) {
-          delete rooms[code];
-        } else {
-          room.phase = "waiting";
-          room.turn = 0;
-          room.log.push("Oyuncunun bağlantısı kesildi.");
-          sendRoom(room);
-        }
-
-        break;
-      }
+    if (room.players.length === 0) {
+      delete rooms[room.code];
+    } else {
+      room.phase = "waiting";
+      room.turn = 0;
+      room.log.push("Rakibin bağlantısı kesildi.");
+      updateRoom(room);
     }
   });
-
 });
+
+// ==========================================
+// 8. SUNUCU SAĞLIK KONTROLÜ
+// ==========================================
 
 app.get("/health", (req, res) => {
   res.json({
     status: "ok",
-    rooms: Object.keys(rooms).length
+    championCount: champions.length,
+    itemCount: items.length,
+    activeRooms: Object.keys(rooms).length
+  });
+});
+
+app.get("/game-data", (req, res) => {
+  res.json({
+    champions,
+    items
   });
 });
 
 server.listen(PORT, "0.0.0.0", () => {
-  console.log("LoL Duel sunucusu çalışıyor. Port:", PORT);
+  console.log("LoL Duel sunucusu çalışıyor:", PORT);
 });
