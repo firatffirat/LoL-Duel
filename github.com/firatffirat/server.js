@@ -196,8 +196,7 @@ function calculateStats(player) {
 // ==========================================
 
 function attack(attacker, defender, round) {
-  const c = attacker.champion;
-  const mechanic = c.mechanic;
+  const mechanic = attacker.mechanic;
 
   let damage = attacker.atk;
 
