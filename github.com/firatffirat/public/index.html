@@ -1,87 +1,160 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#10131d">
-<title>LoL Duel</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101018">
+  <title>LoL Duel - Şampiyon Savaşı</title>
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
+  <div class="background-glow"></div>
 
-<main class="wrap">
+  <header class="topbar">
+    <div class="logo">⚔ LOL DUEL</div>
+    <div id="connectionStatus" class="status">Bağlantı bekleniyor...</div>
+  </header>
 
-<header>
-<div class="eyebrow">İKİ KİŞİLİK ÇEVRİM İÇİ DÜELLO</div>
-<h1>⚔️ LoL <span>Duel</span></h1>
-<p class="muted">Şampiyonunu seç. Eşyalarını diz. Rakibini alt et.</p>
-</header>
+  <main class="container">
 
-<section id="connect" class="panel">
+    <!-- ODA EKRANI -->
+    <section id="connectionScreen" class="screen">
+      <div class="hero">
+        <div class="eyebrow">İKİ OYUNCU • ÇEVRİM İÇİ DÜELLO</div>
+        <h1>Şampiyonunu seç.<br><span>Savaşa hazırlan.</span></h1>
+        <p>Bir oda oluştur veya arkadaşının odasına katıl.</p>
+      </div>
 
-<label>Oyuncu adın</label>
-<input id="playerName" maxlength="18" placeholder="Adını yaz">
+      <div class="panel">
+        <label for="playerName">Oyuncu adın</label>
+        <input id="playerName" type="text" maxlength="18"
+          placeholder="Oyuncu adını yaz">
 
-<button id="createBtn" class="primary">Lobi oluştur</button>
+        <button id="createRoomBtn" class="primary-btn">
+          ODA OLUŞTUR
+        </button>
 
-<div class="or">— veya —</div>
+        <div class="separator">VEYA</div>
 
-<label>Arkadaşının oda kodu</label>
-<input id="roomCode" maxlength="6" placeholder="Örn. A1B2C3">
+        <label for="roomCodeInput">Oda kodu</label>
+        <input id="roomCodeInput" type="text" maxlength="6"
+          placeholder="6 haneli kod">
 
-<button id="joinBtn">Odaya katıl</button>
+        <button id="joinRoomBtn" class="secondary-btn">
+          ODAYA KATIL
+        </button>
 
-<p id="connectMsg" class="msg"></p>
+        <p id="connectionMessage" class="message"></p>
+      </div>
+    </section>
 
-</section>
+    <!-- LOBİ EKRANI -->
+    <section id="lobbyScreen" class="screen hidden">
+      <div class="section-heading">
+        <div class="eyebrow">OYUN LOBİSİ</div>
+        <h2>Rakibini bekle</h2>
+      </div>
 
-<section id="game" class="hidden">
+      <div class="panel room-panel">
+        <p>ODA KODU</p>
+        <div class="room-code">
+          <span id="roomCode">------</span>
+          <button id="copyRoomBtn" class="small-btn">KOPYALA</button>
+        </div>
+        <div id="playersList" class="players-list"></div>
+        <p id="lobbyMessage" class="message">
+          İkinci oyuncunun katılması bekleniyor.
+        </p>
+      </div>
+    </section>
 
-<div class="panel roombar">
-<div>
-<small>ODA KODU</small>
-<strong id="codeLabel">------</strong>
-</div>
-<button id="copyBtn" class="small">Kodu kopyala</button>
-</div>
+    <!-- ŞAMPİYON SEÇİMİ -->
+    <section id="championScreen" class="screen hidden">
+      <div class="section-heading">
+        <div class="eyebrow">AŞAMA 01</div>
+        <h2>Şampiyonunu seç</h2>
+        <p id="championMessage">Sıra sende olduğunda bir şampiyon seç.</p>
+      </div>
 
-<div class="players" id="players"></div>
+      <div id="championGrid" class="champion-grid"></div>
 
-<section id="championSection" class="panel hidden">
-<h2>Şampiyonunu seç</h2>
-<p class="muted">Her oyuncu farklı bir şampiyon seçmeli.</p>
-<div id="champions" class="grid"></div>
-</section>
+      <div id="kaynFormBox" class="panel hidden">
+        <h3>Kayn formunu seç</h3>
+        <button id="shadowFormBtn" class="secondary-btn">
+          Gölge Suikastçı
+        </button>
+        <button id="rhaastFormBtn" class="secondary-btn">
+          Kızıl Kayn
+        </button>
+      </div>
+    </section>
 
-<section id="itemSection" class="panel hidden">
-<div class="sectionhead">
-<h2>Eşya seçimi</h2>
-<span id="turnLabel" class="pill"></span>
-</div>
-<p class="muted">Sırayla 3 eşya seçin.</p>
-<div id="items" class="grid"></div>
-<p id="itemCount" class="muted"></p>
-</section>
+    <!-- EŞYA SEÇİMİ -->
+    <section id="itemScreen" class="screen hidden">
+      <div class="section-heading">
+        <div class="eyebrow">AŞAMA 02</div>
+        <h2>Eşyalarını oluştur</h2>
+        <p id="itemMessage">Sırayla eşya seçeceksiniz.</p>
+      </div>
 
-<section id="battleSection" class="panel hidden">
-<h2>⚔️ Düello sonucu</h2>
-<div id="battleSummary"></div>
-<div id="battleLog"></div>
-<button id="restartBtn" class="primary">
-Yeni lobi için sayfayı yenile
-</button>
-</section>
+      <div class="panel">
+        <h3>Seçilen eşyalar</h3>
+        <div id="ownedItems" class="owned-items"></div>
+        <p id="itemCount" class="item-count">0 / 6 eşya</p>
+      </div>
 
-<section class="panel">
-<h3>Oyun akışı</h3>
-<div id="activity" class="activity"></div>
-</section>
+      <div id="itemGrid" class="item-grid"></div>
+    </section>
 
-</section>
-</main>
+    <!-- SAVAŞ EKRANI -->
+    <section id="battleScreen" class="screen hidden">
+      <div class="section-heading">
+        <div class="eyebrow">SON AŞAMA</div>
+        <h2>Şampiyonlar çarpışıyor</h2>
+      </div>
 
-<script src="/socket.io/socket.io.js"></script>
-<script src="app.js"></script>
+      <div class="battle-arena">
+        <div id="fighterOne" class="fighter-card">
+          <h3 id="fighterOneName">Oyuncu 1</h3>
+          <div class="health-track">
+            <div id="fighterOneHealth" class="health-fill"></div>
+          </div>
+          <p id="fighterOneStats"></p>
+        </div>
 
+        <div class="versus">VS</div>
+
+        <div id="fighterTwo" class="fighter-card">
+          <h3 id="fighterTwoName">Oyuncu 2</h3>
+          <div class="health-track">
+            <div id="fighterTwoHealth" class="health-fill"></div>
+          </div>
+          <p id="fighterTwoStats"></p>
+        </div>
+      </div>
+
+      <div id="winnerBox" class="winner-box hidden">
+        <h2 id="winnerName"></h2>
+        <p>Savaş tamamlandı!</p>
+        <button id="playAgainBtn" class="primary-btn">
+          YENİ OYUN
+        </button>
+      </div>
+
+      <div class="panel battle-log-panel">
+        <h3>Savaş günlüğü</h3>
+        <div id="battleLog" class="battle-log"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    LoL Duel • Bağımsız hayran yapımı oyun prototipi
+  </footer>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/app.js"></script>
 </body>
 </html>
